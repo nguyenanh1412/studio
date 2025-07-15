@@ -19,7 +19,7 @@ if (typeof window !== 'undefined') {
       return v.toString(16);
     });
   };
-}
+} 
 
 const getUUID = () => {
     if (typeof window !== 'undefined' && window.crypto.randomUUID) {
