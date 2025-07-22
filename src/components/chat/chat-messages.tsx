@@ -11,15 +11,18 @@ interface ChatMessagesProps {
 
 export function ChatMessages({ messages }: ChatMessagesProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-    }
+    scrollToBottom();
   }, [messages]);
 
   return (
-    <ScrollArea className="flex-1" viewportRef={scrollAreaRef}>
+    <ScrollArea className="flex-1" ref={scrollAreaRef}>
       <div className="p-4 md:p-6 space-y-6">
         {messages.length > 0 ? (
           messages.map((message) => (
@@ -32,6 +35,7 @@ export function ChatMessages({ messages }: ChatMessagesProps) {
             </p>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
     </ScrollArea>
   );

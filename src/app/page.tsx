@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useLocalStorage } from '@/hooks/use-local-storage';
 import { v4 as uuidv4 } from 'uuid';
 
 import { detectAndTranslate } from '@/ai/flows/detect-and-translate';
@@ -12,8 +11,8 @@ import { ChatMessages } from '@/components/chat/chat-messages';
 import { ChatInput } from '@/components/chat/chat-input';
 
 export default function ChatPage() {
-  const [messages, setMessages] = useLocalStorage<Message[]>('tri-lingual-messages', []);
-  const [uiLang, setUiLang] = useLocalStorage<UILanguage>('tri-lingual-uilang', 'en');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [uiLang, setUiLang] = useState<UILanguage>('en');
   const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
 
