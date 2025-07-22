@@ -1,28 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useLocalStorage } from '@/hooks/use-local-storage';
+import { v4 as uuidv4 } from 'uuid';
 
 import { detectAndTranslate } from '@/ai/flows/detect-and-translate';
 import type { Message, UILanguage } from '@/lib/types';
 import { ChatLayout } from '@/components/chat/chat-layout';
 import { ChatMessages } from '@/components/chat/chat-messages';
 import { ChatInput } from '@/components/chat/chat-input';
-
-// This is a workaround for server-side rendering environments where crypto is not available.
-const getUUID = () => {
-  if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
-    return window.crypto.randomUUID();
-  }
-  // Basic fallback for environments without crypto.randomUUID
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-};
-
 
 export default function ChatPage() {
   const [messages, setMessages] = useLocalStorage<Message[]>('tri-lingual-messages', []);
@@ -36,13 +23,13 @@ export default function ChatPage() {
     setIsSending(true);
 
     const userMessage: Message = {
-      id: getUUID(),
+      id: uuidv4(),
       role: 'user',
       text,
     };
 
     const loadingMessage: Message = {
-      id: getUUID(),
+      id: uuidv4(),
       role: 'assistant',
       isLoading: true,
       text: '...',
