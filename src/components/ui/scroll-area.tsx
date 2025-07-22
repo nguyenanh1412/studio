@@ -50,7 +50,6 @@ const ScrollBar = React.forwardRef<
 ))
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName
 
-// You are not exporting this, which is causing the problem
 const ScrollViewport = ScrollAreaPrimitive.Viewport;
 
 export { ScrollArea, ScrollBar, ScrollViewport }
