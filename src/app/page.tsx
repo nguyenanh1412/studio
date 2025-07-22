@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/hooks/use-toast';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 
@@ -11,22 +10,19 @@ import { ChatLayout } from '@/components/chat/chat-layout';
 import { ChatMessages } from '@/components/chat/chat-messages';
 import { ChatInput } from '@/components/chat/chat-input';
 
-// Polyfill for uuid in browser environments
-if (typeof window !== 'undefined') {
-  window.crypto.randomUUID = window.crypto.randomUUID || function() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  };
-} 
-
+// This is a workaround for server-side rendering environments where crypto is not available.
 const getUUID = () => {
-    if (typeof window !== 'undefined' && window.crypto.randomUUID) {
-        return window.crypto.randomUUID();
-    }
-    return uuidv4();
-}
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+  // Basic fallback for environments without crypto.randomUUID
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
 
 export default function ChatPage() {
   const [messages, setMessages] = useLocalStorage<Message[]>('tri-lingual-messages', []);
@@ -80,7 +76,8 @@ export default function ChatPage() {
         title: 'Error',
         description: 'Failed to get translation. Please try again.',
       });
-      setMessages((prev) => prev.filter((msg) => msg.id !== loadingMessage.id));
+      // Remove user message and loading message on error
+      setMessages((prev) => prev.filter((msg) => msg.id !== userMessage.id && msg.id !== loadingMessage.id));
     } finally {
       setIsSending(false);
     }
